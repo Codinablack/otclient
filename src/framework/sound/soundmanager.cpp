@@ -26,14 +26,45 @@
 #include "soundmanager.h"
 #include "soundsource.h"
 #include "streamsoundsource.h"
+#include "soundeffect.h"
 
+#include <AL/al.h>
+#include <AL/alext.h>
+#include <AL/efx.h>
+#include <AL/efx-presets.h>
+
+#include <cstdint>
 #include <framework/core/asyncdispatcher.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
 
 SoundManager g_sounds;
+/* Effect object functions */
+static LPALGENEFFECTS alGenEffects;
+static LPALDELETEEFFECTS alDeleteEffects;
+static LPALISEFFECT alIsEffect;
+static LPALEFFECTI alEffecti;
+static LPALEFFECTIV alEffectiv;
+static LPALEFFECTF alEffectf;
+static LPALEFFECTFV alEffectfv;
+static LPALGETEFFECTI alGetEffecti;
+static LPALGETEFFECTIV alGetEffectiv;
+static LPALGETEFFECTF alGetEffectf;
+static LPALGETEFFECTFV alGetEffectfv;
 
+/* Auxiliary Effect Slot object functions */
+static LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots;
+static LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots;
+static LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot;
+static LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti;
+static LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv;
+static LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf;
+static LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv;
+static LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti;
+static LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv;
+static LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf;
+static LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv;
 void SoundManager::init()
 {
     m_device = alcOpenDevice(nullptr);
@@ -219,11 +250,12 @@ void SoundManager::stopAll()
     }
 }
 
-SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
+SoundSourcePtr SoundManager::createSoundSource(const std::string& name)
 {
     SoundSourcePtr source;
 
     try {
+        const std::string& filename = resolveSoundFile(name);
         const auto it = m_buffers.find(filename);
         if (it != m_buffers.end()) {
             source = SoundSourcePtr(new SoundSource);
@@ -284,6 +316,8 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
         return nullptr;
     }
 
+    //source->setEffect(m_effectSlot);
+
     return source;
 }
 
@@ -299,3 +333,21 @@ void SoundManager::ensureContext()
     if (m_context)
         alcMakeContextCurrent(m_context);
 }
+
+void SoundManager::setPosition(const Point& pos)
+{
+    alListener3f(AL_POSITION, pos.x, pos.y, 0);
+}
+
+SoundEffectPtr SoundManager::createSoundEffect()
+{
+    SoundEffectPtr soundEffect(new SoundEffect(m_device));
+    return soundEffect;
+}
+
+/*SoundEffectPtr SoundManager::createSoundEffect(std::string preset)
+{
+    SoundEffectPtr soundEffect(new SoundEffect(m_device));
+    soundEffect->setPreset(preset);
+    return soundEffect;
+}*/

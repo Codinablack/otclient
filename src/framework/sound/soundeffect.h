@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2022 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2020 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,41 +20,41 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_SOUND_DECLARATIONS_H
-#define FRAMEWORK_SOUND_DECLARATIONS_H
+#ifndef SOUNDEFFECT_H
+#define SOUNDEFFECT_H
 
-#include "soundeffect.h"
-#include <framework/global.h>
+#include "declarations.h"
+#include <framework/luaengine/luaobject.h>
 
-#define AL_LIBTYPE_STATIC
-
-#if defined(__APPLE__)
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/efx.h>
 #include <AL/efx-presets.h>
+
+class SoundEffect : public LuaObject
+{
+protected:
+    SoundEffect(uint effectId) : m_effectId(effectId) {}
+
+public:
+    SoundEffect(ALCdevice* device);
+    ~SoundEffect() override;
+    void removeEffect();
+    void setPreset(std::string presetName);
+
+protected:
+
+    friend class SoundManager;
+    friend class SoundSource;
+
+    void loadPreset(EFXEAXREVERBPROPERTIES* preset);
+
+    ALCdevice* m_device;
+    uint m_effectId;
+    uint m_effectSlot;
+    std::map<std::string, EFXEAXREVERBPROPERTIES> m_presets;
+
+};
+
 #endif
 
-class SoundManager;
-class SoundSource;
-class SoundBuffer;
-class SoundFile;
-class SoundChannel;
-class StreamSoundSource;
-class CombinedSoundSource;
-class OggSoundFile;
-class SoundEffect;
-
-using SoundSourcePtr = stdext::shared_object_ptr<SoundSource>;
-using SoundFilePtr = stdext::shared_object_ptr<SoundFile>;
-using SoundBufferPtr = stdext::shared_object_ptr<SoundBuffer>;
-using SoundChannelPtr = stdext::shared_object_ptr<SoundChannel>;
-using StreamSoundSourcePtr = stdext::shared_object_ptr<StreamSoundSource>;
-using CombinedSoundSourcePtr = stdext::shared_object_ptr<CombinedSoundSource>;
-using OggSoundFilePtr = stdext::shared_object_ptr<OggSoundFile>;
-using SoundEffectPtr = stdext::shared_object_ptr<SoundEffect>;
-
-#endif

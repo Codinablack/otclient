@@ -25,9 +25,10 @@
 
 #include "declarations.h"
 #include "soundchannel.h"
+#include <AL/al.h>
 #include <future>
 
- //@bindsingleton g_sounds
+//@bindsingleton g_sounds
 class SoundManager
 {
     enum
@@ -45,25 +46,31 @@ public:
     void enableAudio() { setAudioEnabled(true); }
     void disableAudio() { setAudioEnabled(true); }
     void stopAll();
+    void setPosition(const Point& pos);
 
     void preload(std::string filename);
-    SoundSourcePtr play(std::string filename, float fadetime = 0, float gain = 1.0f, float pitch = 1.0f);
+    SoundSourcePtr play(std::string filename, float fadetime = 0, float gain = 0, float pitch = 0);
     SoundChannelPtr getChannel(int channel);
+    SoundSourcePtr createSoundSource(const std::string& name);
+    SoundEffectPtr createSoundEffect();
+    //SoundEffectPtr createSoundEffect(std::string preset);
 
     std::string resolveSoundFile(std::string file);
     void ensureContext();
 
 private:
-    SoundSourcePtr createSoundSource(const std::string& filename);
 
     ALCdevice* m_device;
     ALCcontext* m_context;
+    ALuint m_effect;
+    ALuint m_effectSlot;
 
     std::map<StreamSoundSourcePtr, std::shared_future<SoundFilePtr>> m_streamFiles;
     std::unordered_map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
     bool m_audioEnabled{ true };
     std::unordered_map<int, SoundChannelPtr> m_channels;
+    std::unordered_map<std::string, SoundEffectPtr> m_effects;
 };
 
 extern SoundManager g_sounds;

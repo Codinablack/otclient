@@ -51,11 +51,16 @@ public:
     virtual void setPitch(float pitch);
     virtual void setPosition(const Point& pos);
     virtual void setVelocity(const Point& velocity);
+    virtual void setRolloff(float rolloff);
     virtual void setFading(FadeState state, float fadetime);
+    //virtual void setEffect(ALint effectSlot);
+    virtual void setEffect(SoundEffectPtr soundEffect);
+    virtual void removeEffect();
 
     std::string getName() { return m_name; }
     uchar getChannel() { return m_channel; }
     float getGain() { return m_gain; }
+    float getReferenceDistance();
 
 protected:
     void setBuffer(const SoundBufferPtr& buffer);
@@ -74,6 +79,7 @@ protected:
     float m_fadeTime;
     float m_fadeGain;
     float m_gain;
+    uint m_effectId;
 };
 
 #endif

@@ -837,6 +837,18 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sounds", "isAudioEnabled", &SoundManager::isAudioEnabled, &g_sounds);
 
     g_lua.registerClass<SoundSource>();
+    g_lua.bindClassStaticFunction<SoundSource>("create", [] { return SoundSourcePtr(new SoundSource); });
+    g_lua.bindClassMemberFunction<SoundSource>("setName", &SoundSource::setName);
+    g_lua.bindClassMemberFunction<SoundSource>("play", &SoundSource::play);
+    g_lua.bindClassMemberFunction<SoundSource>("stop", &SoundSource::stop);
+    g_lua.bindClassMemberFunction<SoundSource>("isPlaying", &SoundSource::isPlaying);
+    g_lua.bindClassMemberFunction<SoundSource>("setGain", &SoundSource::setGain);
+    g_lua.bindClassMemberFunction<SoundSource>("setPosition", &SoundSource::setPosition);
+    g_lua.bindClassMemberFunction<SoundSource>("setVelocity", &SoundSource::setVelocity);
+    g_lua.bindClassMemberFunction<SoundSource>("setFading", &SoundSource::setFading);
+    g_lua.bindClassMemberFunction<SoundSource>("setLooping", &SoundSource::setLooping);
+    g_lua.bindClassMemberFunction<SoundSource>("setRelative", &SoundSource::setRelative);
+    g_lua.bindClassMemberFunction<SoundSource>("setReferenceDistance", &SoundSource::setReferenceDistance);
     g_lua.registerClass<CombinedSoundSource, SoundSource>();
     g_lua.registerClass<StreamSoundSource, SoundSource>();
 

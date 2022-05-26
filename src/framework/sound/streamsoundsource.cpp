@@ -25,6 +25,8 @@
 #include "soundfile.h"
 
 #include <framework/util/databuffer.h>
+#include <framework/core/asyncdispatcher.h>
+#include <framework/core/resourcemanager.h>
 
 StreamSoundSource::StreamSoundSource()
 {
@@ -36,6 +38,23 @@ StreamSoundSource::StreamSoundSource()
 StreamSoundSource::~StreamSoundSource()
 {
     stop();
+}
+
+void StreamSoundSource::setFile(std::string filename)
+{
+    filename = g_resources.guessFilePath(filename, "ogg");
+    filename  = g_resources.resolvePath(filename);
+
+    SoundFilePtr soundFile = SoundFile::loadSoundFile(filename);/*g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+        try {
+            return SoundFile::loadSoundFile(filename);
+        } catch (std::exception& e) {
+            g_logger.error(e.what());
+            return nullptr;
+        }
+    });*/
+
+    setSoundFile(soundFile);
 }
 
 void StreamSoundSource::setSoundFile(const SoundFilePtr& soundFile)

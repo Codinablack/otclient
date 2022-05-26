@@ -21,7 +21,10 @@
  */
 
 #include "soundsource.h"
+#include "declarations.h"
 #include "soundbuffer.h"
+#include "soundeffect.h"
+#include "soundfile.h"
 
 #include "framework/stdext/time.h"
 
@@ -95,6 +98,13 @@ void SoundSource::setReferenceDistance(float distance)
     alSourcef(m_sourceId, AL_REFERENCE_DISTANCE, distance);
 }
 
+float SoundSource::getReferenceDistance()
+{
+    float distance;
+    alGetSourcef(m_sourceId, AL_REFERENCE_DISTANCE, &distance);
+    return distance;
+}
+
 void SoundSource::setGain(float gain)
 {
     alSourcef(m_sourceId, AL_GAIN, gain);
@@ -109,6 +119,11 @@ void SoundSource::setPitch(float pitch)
 void SoundSource::setPosition(const Point& pos)
 {
     alSource3f(m_sourceId, AL_POSITION, pos.x, pos.y, 0);
+}
+
+void SoundSource::setRolloff(float rolloff)
+{
+    alSourcef(m_sourceId, AL_ROLLOFF_FACTOR, rolloff);
 }
 
 void SoundSource::setVelocity(const Point& velocity)
@@ -156,6 +171,39 @@ void SoundSource::update()
             m_fadeState = NoFading;
         } else {
             setGain(((m_fadeTime - elapsed) / m_fadeTime) * m_fadeGain);
+        }
+    }
+}
+
+/*void SoundSource::setEffect(ALint effectSlot)
+{
+
+    alSource3i(m_sourceId, AL_AUXILIARY_SEND_FILTER, (ALint)effectSlot, 0, AL_FILTER_NULL);
+    //assert(alGetError()==AL_NO_ERROR && "Failed to setup sound source");
+    ALenum err = alGetError();
+    if(err != AL_NO_ERROR) {
+        g_logger.error(stdext::format("Failed to set EFX on source: %s", alGetString(err)));
+    }
+}*/
+
+void SoundSource::setEffect(SoundEffectPtr soundEffect)
+{
+    m_effectId = soundEffect->m_effectId;
+    alSource3i(m_sourceId, AL_AUXILIARY_SEND_FILTER, (ALint)soundEffect->m_effectId, 0, AL_FILTER_NULL);
+    ALenum err = alGetError();
+    if(err != AL_NO_ERROR) {
+        g_logger.error(stdext::format("Failed to set effect on source: %s", alGetString(err)));
+    }
+}
+
+void SoundSource::removeEffect()
+{
+    if (m_effectId != 0 ) {
+        m_effectId = 0;
+        alSource3i(m_sourceId, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, AL_FILTER_NULL);
+        ALenum err = alGetError();
+        if (err != AL_NO_ERROR) {
+            g_logger.error(stdext::format("Failed to remove effect on source: %s", alGetString(err)));
         }
     }
 }

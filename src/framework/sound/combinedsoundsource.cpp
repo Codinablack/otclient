@@ -113,3 +113,21 @@ void CombinedSoundSource::update()
     for (const SoundSourcePtr& source : m_sources)
         source->update();
 }
+
+/*void CombinedSoundSource::setRolloff(float rolloff)
+{
+    for (const SoundSourcePtr& source : m_sources)
+        source->setEffect(rolloff);
+}*/
+
+void CombinedSoundSource::setEffect(SoundEffectPtr soundEffect)
+{
+    for (const SoundSourcePtr& source : m_sources)
+        source->setEffect(soundEffect);
+}
+
+void CombinedSoundSource::removeEffect()
+{
+    for (const SoundSourcePtr& source : m_sources)
+        source->removeEffect();
+}
