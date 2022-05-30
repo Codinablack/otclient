@@ -549,6 +549,9 @@
     <ClCompile Include="..\src\client\spriteappearances.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundeffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1078,6 +1081,9 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\util\uuid.h">
       <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\sound\soundeffect.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

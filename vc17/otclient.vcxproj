@@ -494,6 +494,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClCompile Include="..\src\framework\sound\oggsoundfile.cpp" />
     <ClCompile Include="..\src\framework\sound\soundbuffer.cpp" />
     <ClCompile Include="..\src\framework\sound\soundchannel.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundeffect.cpp" />
     <ClCompile Include="..\src\framework\sound\soundfile.cpp" />
     <ClCompile Include="..\src\framework\sound\soundmanager.cpp" />
     <ClCompile Include="..\src\framework\sound\soundsource.cpp" />
@@ -660,6 +661,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\sound\soundmanager.h" />
     <ClInclude Include="..\src\framework\sound\soundsource.h" />
     <ClInclude Include="..\src\framework\sound\streamsoundsource.h" />
+    <ClInclude Include="..\src\framework\sound\soundeffect.h" />
     <ClInclude Include="..\src\framework\stdext\cast.h" />
     <ClInclude Include="..\src\framework\stdext\compiler.h" />
     <ClInclude Include="..\src\framework\stdext\demangle.h" />

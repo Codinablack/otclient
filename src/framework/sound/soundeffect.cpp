@@ -200,6 +200,6 @@ void SoundEffect::setPreset(std::string presetName)
         //std::cout << "Found " << search->first << '\n';
         loadPreset(&search->second);
     } else {
-        g_logger.error(std::format("Could not find preset matching: %s\n", presetName);
+        g_logger.error(std::format("Could not find preset matching: %s\n", presetName));
     }
 }
