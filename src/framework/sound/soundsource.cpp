@@ -45,6 +45,9 @@ SoundSource::SoundSource()
 
 SoundSource::~SoundSource()
 {
+    if (m_effectId != 0) {
+        removeEffect();
+    }
     if (m_sourceId != 0) {
         stop();
         alDeleteSources(1, &m_sourceId);

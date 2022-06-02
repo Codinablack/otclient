@@ -28,6 +28,7 @@
 #include <AL/al.h>
 #include <future>
 
+
 //@bindsingleton g_sounds
 class SoundManager
 {
@@ -47,6 +48,7 @@ public:
     void disableAudio() { setAudioEnabled(true); }
     void stopAll();
     void setPosition(const Point& pos);
+    bool isEaxEnabled();
 
     void preload(std::string filename);
     SoundSourcePtr play(std::string filename, float fadetime = 0, float gain = 0, float pitch = 0);

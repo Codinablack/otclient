@@ -34,6 +34,8 @@
 #include <AL/efx.h>
 #include <AL/efx-presets.h>
 
+SoundManager soundMan;
+
 /* Effect object functions */
 static LPALGENEFFECTS alGenEffects;
 static LPALDELETEEFFECTS alDeleteEffects;
@@ -124,15 +126,25 @@ SoundEffect::~SoundEffect()
 {
     if (m_effectId != 0) {
         alDeleteEffects(1, &m_effectId);
+        //alDeleteAuxiliaryEffectSlots(1, &m_effectSlot);
+        auto err = alGetError();
+        if (err != AL_NO_ERROR) {
+            g_logger.error(stdext::format("error while deleting sound effect: %s", alGetString(err)));
+        }
+    }
+    if (m_effectSlot != 0) {
         alDeleteAuxiliaryEffectSlots(1, &m_effectSlot);
-        assert(alGetError() == AL_NO_ERROR);
+        auto err = alGetError();
+        if (err != AL_NO_ERROR) {
+            g_logger.error(stdext::format("error while deleting sound aux effect slot: %s", alGetString(err)));
+        }
     }
 }
 
 void SoundEffect::loadPreset(EFXEAXREVERBPROPERTIES* preset)
 {
-    if(alGetEnumValue("AL_EFFECT_EAXREVERB") != 0) {
-        //printf("Using EAX Reverb\n");
+    if (soundMan.isEaxEnabled()) {
+        std::cout << "Using EAX Reverb!\n";
 
         /* EAX Reverb is available. Set the EAX effect type then load the
         * reverb properties. */
@@ -162,7 +174,7 @@ void SoundEffect::loadPreset(EFXEAXREVERBPROPERTIES* preset)
         alEffectf(m_effectId, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, preset->flRoomRolloffFactor);
         alEffecti(m_effectId, AL_EAXREVERB_DECAY_HFLIMIT, preset->iDecayHFLimit);
     } else {
-        //printf("Using Standard Reverb\n");
+        std::cout << "Using Standard Reverb!\n";
 
         /* No EAX Reverb. Set the standard reverb effect type then load the
          * available reverb properties. */
@@ -202,4 +214,126 @@ void SoundEffect::setPreset(std::string presetName)
     } else {
         g_logger.error(std::format("Could not find preset matching: %s\n", presetName));
     }
+}
+
+bool SoundEffect::setReverbDensity(float density) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_DENSITY, density);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_DENSITY, density);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbDiffusion(float diffusion) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_DIFFUSION, diffusion);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_DIFFUSION, diffusion);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbGain(float gain) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_GAIN, gain);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_GAIN, gain);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbGainHF(float gainHF) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_GAINHF, gainHF);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_GAINHF, gainHF);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbGainLF(float gainLF) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_GAINLF, gainLF);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbDecayTime(float decayTime) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_DECAY_TIME, decayTime);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_DECAY_TIME, decayTime);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbDecayHfRatio(float decayHfRatio) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_DECAY_HFRATIO, decayHfRatio);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_DECAY_HFRATIO, decayHfRatio);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbDecayLfRatio(float decayLfRatio) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_DECAY_LFRATIO, decayLfRatio);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbReflectionsGain(float reflectionsGain) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_REFLECTIONS_GAIN, reflectionsGain);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_REFLECTIONS_GAIN, reflectionsGain);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
+}
+
+bool SoundEffect::setReverbReflectionsDelay(float reflectionsDelay) {
+    if (soundMan.isEaxEnabled()) {
+        alEffectf(m_effectId, AL_EAXREVERB_REFLECTIONS_DELAY, reflectionsDelay);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    } else {
+        alEffectf(m_effectId, AL_REVERB_REFLECTIONS_DELAY, reflectionsDelay);
+        alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, (ALint)m_effectId);
+        return true;
+    }
+    return false;
 }

@@ -41,6 +41,17 @@ public:
     ~SoundEffect() override;
     void removeEffect();
     void setPreset(std::string presetName);
+    bool setReverbDensity(float density);
+    bool setReverbDiffusion(float diffusion);
+    bool setReverbGain(float gain);
+    bool setReverbGainHF(float gainHF);
+    bool setReverbGainLF(float gainLF);
+    bool setReverbDecayTime(float decayTime);
+    bool setReverbDecayHfRatio(float decayHfRatio);
+    bool setReverbDecayLfRatio(float decayLfRatio);
+    bool setReverbReflectionsGain(float reflectionsGain);
+    bool setReverbReflectionsDelay(float reflectionsDelay);
+    uint m_effectId;
 
 protected:
 
@@ -50,7 +61,7 @@ protected:
     void loadPreset(EFXEAXREVERBPROPERTIES* preset);
 
     ALCdevice* m_device;
-    uint m_effectId;
+    
     uint m_effectSlot;
     std::map<std::string, EFXEAXREVERBPROPERTIES> m_presets;
 

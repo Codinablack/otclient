@@ -351,3 +351,13 @@ SoundEffectPtr SoundManager::createSoundEffect()
     soundEffect->setPreset(preset);
     return soundEffect;
 }*/
+
+
+bool SoundManager::isEaxEnabled()
+{
+    if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
